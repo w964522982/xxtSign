@@ -33,13 +33,17 @@ def printConfig():
     table.add_column("检测前N条任务")
     table.add_column("server酱通知", justify="right")
     table.add_column("Bark通知", justify="right")
+    table.add_column("推送熊通知", justify="right")
     n1="未开启"
     n2="未开启"
+    n3="未开启"
     if(config['serverKey']!=""):
         n1="开启"
     if(config['barkKey']!=""):
         n2="开启"
-    table.add_row(str(config['sleep'])+"秒",str(config['count']),n1,n2)
+    if(config['pushbearKey']!=""):
+        n3="开启"
+    table.add_row(str(config['sleep'])+"秒",str(config['count']),n1,n2,n3)
     console.print(table)
 
 def md5(data):
@@ -161,6 +165,7 @@ def initConfig():
         config['count']=pconfig['全局配置'].getint('count')
         config['serverKey']=pconfig['通知'].get('serverKey')
         config['barkKey']=pconfig['通知'].get('barkKey')
+        config['pushbearKey']=pconfig['通知'].get('pushbearKey')
         for i in range(1,usercount+1):
             if '用户'+str(i) in pconfig.sections():
                 tmpinfo={"account":"","password":"","stats":0}
@@ -257,6 +262,9 @@ def notice(aid,account,msg):
         requests.get(url)
     if(config['barkKey']!=""):
         url="https://api.day.app/"+config['barkKey']+"/炒饭自动签到/"+msg
+        requests.get(url)
+    if(config['pushbearKey']!=""):
+        url="https://push.caihongpi.net/api/v1/push/"+config['pushbearKey']+"msg=炒饭自动签到"+msg
         requests.get(url)
     noticeId.append(md5(aid+account))
 
